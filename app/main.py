@@ -8,7 +8,7 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(
     title="Eduplat API",
     description="Backend for Eduplat - Educational Platform",
-    version="1.0.0"
+    version="1.0.0",
 )
 
 app.add_middleware(

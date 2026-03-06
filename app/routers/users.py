@@ -1,26 +1,21 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from app.database import get_db
-from app import models, schemas
+from fastapi import APIRouter, Depends, status
+from app.models.user import User
+from app.schemas.user import UserProfileResponse
+from app.services.user_service import UserService
+from app.dependencies import get_user_service
 from app.auth import get_current_user
 
 router = APIRouter()
 
 
-@router.get("/me", response_model=schemas.UserProfileResponse)
-def get_my_profile(
-    current_user: models.User = Depends(get_current_user),
-    db: Session = Depends(get_db)
-):
-    """Get full profile of the authenticated user"""
+@router.get("/me", response_model=UserProfileResponse)
+def get_my_profile(current_user: User = Depends(get_current_user)):
     return current_user
 
 
 @router.delete("/me", status_code=status.HTTP_204_NO_CONTENT)
 def delete_account(
-    current_user: models.User = Depends(get_current_user),
-    db: Session = Depends(get_db)
+    current_user: User = Depends(get_current_user),
+    service: UserService = Depends(get_user_service),
 ):
-    """Delete the current user's account"""
-    db.delete(current_user)
-    db.commit()
+    service.delete_account(current_user)
