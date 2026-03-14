@@ -10,6 +10,3 @@ class UniversityRepository(BaseRepository[University]):
 
     def get_all(self) -> List[University]:
         return self.db.query(University).order_by(University.ranking).all()
-
-    def get_by_id(self, university_id: int) -> Optional[University]:
-        return self.db.query(University).filter(University.id == university_id).first()

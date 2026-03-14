@@ -9,7 +9,7 @@ class AcademicInfo(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False)
-    gpa = Column(Float, nullable=True)
+    gpa = Column(Float, nullable=False)
     sat = Column(Integer, nullable=True)
     ielts = Column(Float, nullable=True)
     toefl = Column(Float, nullable=True)

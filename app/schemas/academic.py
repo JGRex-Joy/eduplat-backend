@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class AcademicInfoCreate(BaseModel):
-    gpa: Optional[float] = None
+    gpa: float
     sat: Optional[int] = None
     ielts: Optional[float] = None
     toefl: Optional[float] = None
@@ -12,7 +12,7 @@ class AcademicInfoCreate(BaseModel):
     @field_validator("gpa")
     @classmethod
     def validate_gpa(cls, v):
-        if v is not None and not (0.0 <= v <= 4.0):
+        if not (0.0 <= v <= 4.0):
             raise ValueError("GPA должен быть в диапазоне 0.00–4.00")
         return v
 

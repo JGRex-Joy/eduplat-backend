@@ -69,9 +69,14 @@ class UniversityService:
     ) -> List[dict]:
         universities = self.repo.get_all()
         return [
-            {
-                "university": u,
-                **_calculate_chance(u, gpa, sat, ielts, toefl, extracurriculars),
-            }
-            for u in universities
-        ]
+        {
+            "id": u.id,
+            "name": u.name,
+            "country": u.country,
+            "city": u.city,
+            "min_gpa": u.min_gpa,
+            "min_sat": u.min_sat,
+            **_calculate_chance(u, gpa, sat, ielts, toefl, extracurriculars),
+        }
+        for u in universities
+]
