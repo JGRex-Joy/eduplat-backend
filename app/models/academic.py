@@ -11,8 +11,8 @@ class AcademicInfo(Base):
     user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False)
     gpa = Column(Float, nullable=True)
     sat = Column(Integer, nullable=True)
-    ielts_toefl = Column(Float, nullable=True)
-    act = Column(Integer, nullable=True)
+    ielts = Column(Float, nullable=True)
+    toefl = Column(Float, nullable=True)
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     user = relationship("User", back_populates="academic_info")
