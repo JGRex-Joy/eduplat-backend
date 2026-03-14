@@ -6,8 +6,8 @@ from datetime import datetime
 class AcademicInfoCreate(BaseModel):
     gpa: Optional[float] = None
     sat: Optional[int] = None
-    ielts_toefl: Optional[float] = None
-    act: Optional[int] = None
+    ielts: Optional[float] = None
+    toefl: Optional[float] = None
 
     @field_validator("gpa")
     @classmethod
@@ -23,18 +23,18 @@ class AcademicInfoCreate(BaseModel):
             raise ValueError("SAT должен быть в диапазоне 400–1600")
         return v
 
-    @field_validator("ielts_toefl")
+    @field_validator("ielts")
     @classmethod
-    def validate_ielts_toefl(cls, v):
-        if v is not None and not (0 <= v <= 120):
-            raise ValueError("IELTS/TOEFL должен быть в диапазоне 0–120 или 1.0–9.0")
+    def validate_ielts(cls, v):
+        if v is not None and not (1.0 <= v <= 9.0):
+            raise ValueError("IELTS должен быть в диапазоне 1.0–9.0")
         return v
 
-    @field_validator("act")
+    @field_validator("toefl")
     @classmethod
-    def validate_act(cls, v):
-        if v is not None and not (1 <= v <= 36):
-            raise ValueError("ACT должен быть в диапазоне 1–36")
+    def validate_toefl(cls, v):
+        if v is not None and not (0 <= v <= 120):
+            raise ValueError("TOEFL должен быть в диапазоне 0–120")
         return v
 
 
@@ -47,8 +47,8 @@ class AcademicInfoResponse(BaseModel):
     user_id: int
     gpa: Optional[float]
     sat: Optional[int]
-    ielts_toefl: Optional[float]
-    act: Optional[int]
+    ielts: Optional[float]
+    toefl: Optional[float]
     updated_at: Optional[datetime]
 
     class Config:

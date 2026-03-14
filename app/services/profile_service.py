@@ -19,7 +19,7 @@ class ProfileService:
         self.academic_repo = AcademicRepository(db)
         self.extra_repo = ExtracurricularRepository(db)
 
-    # --- About ---
+    #  About 
 
     def upsert_about(self, current_user: User, payload: UserAboutCreate) -> UserAbout:
         if payload.email and self.user_repo.email_taken_by_other(payload.email, current_user.id):
@@ -41,7 +41,7 @@ class ProfileService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Информация не найдена")
         return about
 
-    # --- Academic ---
+    #  Academic 
 
     def upsert_academic(self, user_id: int, payload: AcademicInfoCreate) -> AcademicInfo:
         return self.academic_repo.upsert(
@@ -58,7 +58,7 @@ class ProfileService:
             )
         return academic
 
-    # --- Extracurricular ---
+    #  Extracurricular 
 
     def replace_extracurriculars(self, user_id: int, payload: ExtracurricularCreate) -> List[Extracurricular]:
         return self.extra_repo.replace_all(
