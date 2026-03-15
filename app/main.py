@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth, users, profile, universities
+from app.routers import auth, users, profile, universities, opportunities
 from app.database import Base, engine
 
 Base.metadata.create_all(bind=engine)
@@ -8,7 +8,7 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(
     title="Eduplat API",
     description="Backend for Eduplat - Educational Platform",
-    version="1.0.0",
+    version="1.0.0"
 )
 
 app.add_middleware(
@@ -23,6 +23,7 @@ app.include_router(auth.router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(users.router, prefix="/api/v1/users", tags=["Users"])
 app.include_router(profile.router, prefix="/api/v1/profile", tags=["Profile"])
 app.include_router(universities.router, prefix="/api/v1/universities", tags=["Universities"])
+app.include_router(opportunities.router, prefix="/api/v1/opportunities", tags=["Opportunities"])
 
 
 @app.get("/")

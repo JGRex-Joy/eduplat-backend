@@ -3,11 +3,13 @@ from app.schemas.user import UserAboutCreate, UserAboutUpdate, UserAboutResponse
 from app.schemas.academic import AcademicInfoCreate, AcademicInfoUpdate, AcademicInfoResponse
 from app.schemas.extracurricular import ExtracurricularCreate, ExtracurricularResponse
 from app.schemas.university import UniversityWithChanceResponse
+from app.schemas.opportunity import OpportunityResponse
 
 __all__ = [
     "RegisterRequest", "LoginRequest", "TokenResponse",
     "UserAboutCreate", "UserAboutUpdate", "UserAboutResponse", "UserProfileResponse",
     "AcademicInfoCreate", "AcademicInfoUpdate", "AcademicInfoResponse",
     "ExtracurricularCreate", "ExtracurricularResponse",
-    "UniversityWithChanceResponse"
+    "UniversityWithChanceResponse",
+    "OpportunityResponse",
 ]

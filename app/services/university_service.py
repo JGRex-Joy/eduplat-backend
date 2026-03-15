@@ -55,6 +55,9 @@ def _calculate_chance(
     return {"probability": probability, "label": label, "color": color}
 
 
+SORT_FIELDS = {"ranking", "probability", "min_gpa", "min_sat", "min_ielts"}
+
+
 class UniversityService:
     def __init__(self, db: Session):
         self.repo = UniversityRepository(db)
@@ -66,9 +69,14 @@ class UniversityService:
         ielts: Optional[float],
         toefl: Optional[float],
         extracurriculars: List[Extracurricular],
+        country: Optional[str] = None,
+        label: Optional[str] = None,
+        sort_by: str = "ranking",
+        sort_order: str = "asc",
     ) -> List[dict]:
-        universities = self.repo.get_all()
-        return [
+        universities = self.repo.get_all(country=country)
+
+        results = [
             {
                 "id": u.id,
                 "name": u.name,
@@ -76,7 +84,25 @@ class UniversityService:
                 "city": u.city,
                 "min_gpa": u.min_gpa,
                 "min_sat": u.min_sat,
+                "min_ielts": u.min_ielts,
+                "full_description": u.full_description,
                 **_calculate_chance(u, gpa, sat, ielts, toefl, extracurriculars),
             }
             for u in universities
         ]
+
+        if label:
+            results = [u for u in results if u["label"] == label]
+
+        if sort_by in SORT_FIELDS:
+            reverse = sort_order == "desc"
+            results = sorted(
+                results,
+                key=lambda u: (u.get(sort_by) is None, u.get(sort_by) or 0),
+                reverse=reverse,
+            )
+
+        return results
+
+    def get_countries(self) -> List[str]:
+        return self.repo.get_countries()

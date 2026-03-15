@@ -12,6 +12,7 @@ class UniversityWithChanceResponse(BaseModel):
     probability: float
     label: str
     color: str
+    full_description: Optional[str]
 
     class Config:
         from_attributes = True
