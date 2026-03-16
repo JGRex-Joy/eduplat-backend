@@ -14,4 +14,4 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["sh", "-c", "python seed_universities.py && python seed_opportunities.py && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
