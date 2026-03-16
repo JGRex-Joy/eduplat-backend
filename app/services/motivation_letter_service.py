@@ -1,4 +1,7 @@
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 from openai import OpenAI
 from app.schemas.motivation_letter import MotivationLetterRequest, MotivationLetterResponse
 
