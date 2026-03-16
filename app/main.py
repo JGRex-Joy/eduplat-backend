@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import auth, users, profile, universities, opportunities
+from app.routers import auth, users, profile, universities, opportunities, motivation_letter
 from app.database import Base, engine
 
 Base.metadata.create_all(bind=engine)
@@ -24,6 +24,7 @@ app.include_router(users.router, prefix="/api/v1/users", tags=["Users"])
 app.include_router(profile.router, prefix="/api/v1/profile", tags=["Profile"])
 app.include_router(universities.router, prefix="/api/v1/universities", tags=["Universities"])
 app.include_router(opportunities.router, prefix="/api/v1/opportunities", tags=["Opportunities"])
+app.include_router(motivation_letter.router, prefix="/api/v1/motivation-letter", tags=["Motivation Letter"])
 
 
 @app.get("/")
