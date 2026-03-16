@@ -1,75 +1,80 @@
-# Eduplat API — документация для фронтенда
+# Eduplat API
 
-Base URL: `https://your-service.onrender.com/api/v1`  
-Локально: `http://localhost:8000/api/v1`
+Backend образовательной платформы Eduplat. FastAPI + SQLAlchemy.
 
-Все запросы и ответы — **JSON**.  
-Защищённые эндпоинты требуют заголовок:
+**Base URL:** `http://localhost:8000/api/v1`
+
+Все защищённые эндпоинты (🔒) требуют заголовок:
 ```
 Authorization: Bearer <access_token>
 ```
 
 ---
 
+## Содержание
+
+- [Auth](#auth)
+- [Users](#users)
+- [Profile — About](#profile--about)
+- [Profile — Academic](#profile--academic)
+- [Profile — Extracurricular](#profile--extracurricular)
+- [Universities](#universities)
+- [Opportunities](#opportunities)
+- [Motivation Letter](#motivation-letter)
+
+---
+
 ## Auth
 
-### POST `/auth/register`
+### `POST /auth/register`
+
 Регистрация нового пользователя.
 
 **Body:**
 ```json
 {
   "email": "user@example.com",
-  "password": "mypassword123",
-  "confirm_password": "mypassword123"
+  "password": "password123",
+  "confirm_password": "password123"
 }
 ```
 
 **Response `201`:**
 ```json
 {
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "access_token": "eyJ...",
   "token_type": "bearer"
 }
 ```
 
-**Ошибки:**
-```json
-{ "detail": "Пользователь с таким email уже существует" }
-```
-
 ---
 
-### POST `/auth/login`
+### `POST /auth/login`
+
 Вход в аккаунт.
 
 **Body:**
 ```json
 {
   "email": "user@example.com",
-  "password": "mypassword123"
+  "password": "password123"
 }
 ```
 
 **Response `200`:**
 ```json
 {
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "access_token": "eyJ...",
   "token_type": "bearer"
 }
-```
-
-**Ошибки:**
-```json
-{ "detail": "Неверный email или пароль" }
-{ "detail": "Аккаунт деактивирован" }
 ```
 
 ---
 
 ## Users
 
-### GET `/users/me` 🔒
+### `GET /users/me` 🔒
+
 Получить полный профиль текущего пользователя.
 
 **Response `200`:**
@@ -82,56 +87,54 @@ Authorization: Bearer <access_token>
   "about": {
     "id": 1,
     "user_id": 1,
-    "name": "Алибек",
-    "school": "НИШ Алматы",
+    "name": "Иван Иванов",
+    "school": "Школа №1",
     "grade": "11",
     "updated_at": "2024-01-02T10:00:00Z"
   },
   "academic_info": {
     "id": 1,
     "user_id": 1,
-    "gpa": 3.9,
-    "sat": 1450,
-    "ielts_toefl": 7.5,
-    "act": 32,
+    "gpa": 3.8,
+    "sat": 1400,
+    "ielts": 7.5,
+    "toefl": null,
     "updated_at": "2024-01-02T10:00:00Z"
   },
   "extracurriculars": [
     {
       "id": 1,
       "user_id": 1,
-      "category": "leadership",
-      "years_active": "2022-2024",
+      "category": "volunteering",
+      "years_active": "2020-2023",
       "created_at": "2024-01-02T10:00:00Z"
     }
   ]
 }
 ```
 
-> Поля `about`, `academic_info` могут быть `null` если ещё не заполнены.  
-> `extracurriculars` — пустой массив `[]` если нет записей.
+---
+
+### `DELETE /users/me` 🔒
+
+Удалить аккаунт текущего пользователя.
+
+**Response `204` — No Content**
 
 ---
 
-### DELETE `/users/me` 🔒
-Удалить аккаунт.
+## Profile — About
 
-**Response `204`** — пустой ответ.
+### `POST /profile/about` 🔒
 
----
-
-## Profile
-
-### POST `/profile/about` 🔒
-Создать или обновить информацию "О себе".  
-Можно передавать только те поля которые хочешь обновить.
+Создать или обновить личную информацию. Все поля опциональны.
 
 **Body:**
 ```json
 {
-  "name": "Алибек",
+  "name": "Иван Иванов",
   "email": "newemail@example.com",
-  "school": "НИШ Алматы",
+  "school": "Школа №1",
   "grade": "11"
 }
 ```
@@ -141,123 +144,80 @@ Authorization: Bearer <access_token>
 {
   "id": 1,
   "user_id": 1,
-  "name": "Алибек",
-  "school": "НИШ Алматы",
+  "name": "Иван Иванов",
+  "school": "Школа №1",
   "grade": "11",
   "updated_at": "2024-01-02T10:00:00Z"
 }
 ```
 
-**Ошибки:**
-```json
-{ "detail": "Этот email уже используется другим пользователем" }
-```
+---
+
+### `GET /profile/about` 🔒
+
+Получить личную информацию текущего пользователя.
+
+**Response `200`:** — аналогичен ответу `POST /profile/about`.
 
 ---
 
-### GET `/profile/about` 🔒
-Получить информацию "О себе".
+## Profile — Academic
 
-**Response `200`:**
-```json
-{
-  "id": 1,
-  "user_id": 1,
-  "name": "Алибек",
-  "school": "НИШ Алматы",
-  "grade": "11",
-  "updated_at": "2024-01-02T10:00:00Z"
-}
-```
+### `POST /profile/academic` 🔒
 
-**Ошибки:**
-```json
-{ "detail": "Информация не найдена" }
-```
+Создать или обновить академическую информацию.
 
----
-
-### POST `/profile/academic` 🔒
-Создать или обновить академические данные.  
-Все поля опциональны — передавай только нужные.
+> Валидация: GPA `0.0–4.0`, SAT `400–1600`, IELTS `1.0–9.0`, TOEFL `0–120`
 
 **Body:**
 ```json
 {
-  "gpa": 3.9,
-  "sat": 1450,
-  "ielts_toefl": 7.5,
-  "act": 32
+  "gpa": 3.8,
+  "sat": 1400,
+  "ielts": 7.5,
+  "toefl": null
 }
 ```
-
-Допустимые диапазоны:
-- `gpa` — от `0.0` до `4.0`
-- `sat` — от `400` до `1600`
-- `ielts_toefl` — от `0` до `120`
-- `act` — от `1` до `36`
 
 **Response `201`:**
 ```json
 {
   "id": 1,
   "user_id": 1,
-  "gpa": 3.9,
-  "sat": 1450,
-  "ielts_toefl": 7.5,
-  "act": 32,
+  "gpa": 3.8,
+  "sat": 1400,
+  "ielts": 7.5,
+  "toefl": null,
   "updated_at": "2024-01-02T10:00:00Z"
 }
 ```
 
 ---
 
-### GET `/profile/academic` 🔒
-Получить академические данные.
+### `GET /profile/academic` 🔒
 
-**Response `200`:**
-```json
-{
-  "id": 1,
-  "user_id": 1,
-  "gpa": 3.9,
-  "sat": 1450,
-  "ielts_toefl": 7.5,
-  "act": 32,
-  "updated_at": "2024-01-02T10:00:00Z"
-}
-```
+Получить академическую информацию текущего пользователя.
 
-**Ошибки:**
-```json
-{ "detail": "Академическая информация не найдена" }
-```
+**Response `200`:** — аналогичен ответу `POST /profile/academic`.
 
 ---
 
-### POST `/profile/extracurricular` 🔒
-Заменить все активности пользователя.  
-⚠️ Каждый вызов **полностью перезаписывает** предыдущий список.
+## Profile — Extracurricular
+
+### `POST /profile/extracurricular` 🔒
+
+Заменить все внеклассные активности пользователя (предыдущие удаляются полностью).
+
+> Доступные категории: `volunteering`, `leadership`, `club`, `research`, `olympiad`, `sport`  
+> Формат `years_active`: `"YYYY"` или `"YYYY-YYYY"`
 
 **Body:**
 ```json
 {
-  "categories": ["leadership", "research", "sport"],
-  "years_active": "2022-2024"
+  "categories": ["volunteering", "leadership", "olympiad"],
+  "years_active": "2020-2024"
 }
 ```
-
-Доступные категории для `categories`:
-| Значение | Описание |
-|---|---|
-| `volunteering` | Волонтёрство |
-| `leadership` | Лидерство |
-| `club` | Клуб / кружок |
-| `research` | Исследования |
-| `olympiad` | Олимпиады |
-| `sport` | Спорт |
-
-Формат `years_active`: `"YYYY"` или `"YYYY-YYYY"` (например `"2023"` или `"2021-2024"`). Можно передать `null`.
 
 **Response `201`:**
 ```json
@@ -265,40 +225,15 @@ Authorization: Bearer <access_token>
   {
     "id": 1,
     "user_id": 1,
-    "category": "leadership",
-    "years_active": "2022-2024",
+    "category": "volunteering",
+    "years_active": "2020-2024",
     "created_at": "2024-01-02T10:00:00Z"
   },
   {
     "id": 2,
     "user_id": 1,
-    "category": "research",
-    "years_active": "2022-2024",
-    "created_at": "2024-01-02T10:00:00Z"
-  },
-  {
-    "id": 3,
-    "user_id": 1,
-    "category": "sport",
-    "years_active": "2022-2024",
-    "created_at": "2024-01-02T10:00:00Z"
-  }
-]
-```
-
----
-
-### GET `/profile/extracurricular` 🔒
-Получить список всех активностей.
-
-**Response `200`:**
-```json
-[
-  {
-    "id": 1,
-    "user_id": 1,
     "category": "leadership",
-    "years_active": "2022-2024",
+    "years_active": "2020-2024",
     "created_at": "2024-01-02T10:00:00Z"
   }
 ]
@@ -306,37 +241,166 @@ Authorization: Bearer <access_token>
 
 ---
 
-### DELETE `/profile/extracurricular/{id}` 🔒
-Удалить одну активность по ID.
+### `GET /profile/extracurricular` 🔒
 
-**Response `204`** — пустой ответ.
+Получить список всех внеклассных активностей пользователя.
 
-**Ошибки:**
+**Response `200`:** — массив, аналогичный ответу `POST /profile/extracurricular`.
+
+---
+
+### `DELETE /profile/extracurricular/{entry_id}` 🔒
+
+Удалить конкретную запись по ID.
+
+**Response `204` — No Content**
+
+**Response `404`:**
 ```json
 { "detail": "Запись не найдена" }
 ```
 
 ---
 
-## Общие ошибки
+## Universities
 
-| Статус | Когда |
-|---|---|
-| `400` | Неверные данные в запросе |
-| `401` | Токен отсутствует или недействителен |
-| `403` | Доступ запрещён |
-| `404` | Объект не найден |
-| `422` | Ошибка валидации (неверный формат полей) |
+### `GET /universities/` 🔒
 
-Ошибка валидации `422` выглядит так:
+Список университетов с расчётом шанса поступления на основе профиля пользователя.
+
+**Query params (все опциональны):**
+
+| Параметр | Тип | По умолчанию | Описание |
+|---|---|---|---|
+| `country` | string | — | Фильтр по стране: `США`, `Канада`, ... |
+| `label` | string | — | Фильтр: `Сложно`, `Средне`, `Реально` |
+| `sort_by` | string | `ranking` | `ranking`, `min_gpa`, `min_sat`, `min_ielts`, `probability` |
+| `sort_order` | string | `asc` | `asc` или `desc` |
+
+**Response `200`:**
+```json
+[
+  {
+    "id": 1,
+    "name": "MIT",
+    "country": "США",
+    "city": "Кембридж",
+    "min_gpa": 3.5,
+    "min_sat": 1500,
+    "probability": 12.5,
+    "label": "Средне",
+    "color": "yellow",
+    "full_description": "Описание университета..."
+  }
+]
+```
+
+> `label` / `color`: `Сложно` / `red`, `Средне` / `yellow`, `Реально` / `green`
+
+---
+
+### `GET /universities/countries` 🔒
+
+Список всех доступных стран.
+
+**Response `200`:**
+```json
+["Австралия", "Великобритания", "Канада", "США"]
+```
+
+---
+
+## Opportunities
+
+### `GET /opportunities/` 🔒
+
+Список стажировок, волонтёрств и хакатонов.
+
+**Query params (опционально):**
+
+| Параметр | Тип | Описание |
+|---|---|---|
+| `type` | string | `internship`, `volunteering`, `hackathon` |
+
+**Response `200`:**
+```json
+[
+  {
+    "id": 1,
+    "type": "hackathon",
+    "title": "HackNU 2024",
+    "short_description": "Международный хакатон в Алматы",
+    "full_description": "Полное описание...",
+    "image_url": "https://example.com/image.png",
+    "event_date": "30 Сентября",
+    "deadline": "23 Марта",
+    "created_at": "2024-01-01T12:00:00Z"
+  }
+]
+```
+
+---
+
+### `GET /opportunities/{opportunity_id}` 🔒
+
+Получить одну возможность по ID.
+
+**Response `200`:** — объект аналогичный элементу массива выше.
+
+**Response `404`:**
+```json
+{ "detail": "Возможность не найдена" }
+```
+
+---
+
+## Motivation Letter
+
+### `POST /motivation-letter/analyze` 🔒
+
+Отправить мотивационное письмо на AI-анализ (GPT-4o-mini).
+
+> Минимум 100 символов, максимум 10 000 символов.
+
+**Body:**
 ```json
 {
-  "detail": [
-    {
-      "loc": ["body", "email"],
-      "msg": "value is not a valid email address",
-      "type": "value_error.email"
-    }
+  "text": "Я хочу поступить в этот университет, потому что..."
+}
+```
+
+**Response `200`:**
+```json
+{
+  "score": 7,
+  "label": "Хорошо",
+  "color": "yellow",
+  "summary": "Письмо хорошо структурировано, но не хватает конкретных примеров.",
+  "strengths": [
+    "Чёткая структура с введением и заключением",
+    "Выражена личная мотивация"
+  ],
+  "weaknesses": [
+    "Нет конкретных достижений",
+    "Использованы клишированные фразы"
+  ],
+  "suggestions": [
+    "Добавьте конкретные примеры из вашего опыта",
+    "Опишите, почему именно этот университет и направление"
   ]
 }
 ```
+
+> `label` / `color`: `Можно лучше` / `red` (1–4), `Хорошо` / `yellow` (5–8), `Отлично` / `green` (9–10)
+
+---
+
+## Коды ошибок
+
+| Код | Описание |
+|---|---|
+| `400` | Некорректные данные (email занят, пароли не совпадают и т.д.) |
+| `401` | Неверный токен или учётные данные |
+| `403` | Аккаунт деактивирован |
+| `404` | Ресурс не найден |
+| `422` | Ошибка валидации (неверный формат данных) |
